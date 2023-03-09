@@ -1,0 +1,8 @@
+{
+    "authRequired": true,
+    "auth0Logout": true,
+    "baseURL": "https://cs493-turneste-final-project.uc.r.appspot.com/auth",
+    "clientID": "Zg3WvyIsN70mcyRTha9g3xpFh2fo4j03",
+    "issuerBaseURL": "https://dev-tmtuuglxqiaijyli.us.auth0.com",
+    "secret": "ZKXJXUA3RZXDDLk7byrVgwrTS0792k7mP-uCxES_3gJ9tHjcA14-iLcRquajMl0d"
+}
