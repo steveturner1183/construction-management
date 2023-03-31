@@ -3,10 +3,10 @@ const router = express.Router();
 const ds = require('./datastore');
 
 router.get("/", function(req, res) {
-    // Get all captains with matching JWT
-    ds.get_all_entities("Captain")
-    .then ( (captains) => {
-        res.status(200).json(captains);
+    // Get all ProjectManagers with matching JWT
+    ds.get_all_entities("ProjectManager")
+    .then ( (ProjectManagers) => {
+        res.status(200).json(ProjectManagers);
     });
 });
 

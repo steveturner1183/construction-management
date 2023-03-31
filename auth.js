@@ -9,7 +9,7 @@ router.use(auth(config));
 
 // req.isAuthenticated is provided from the auth router
 router.get('/', (req, res) => {
-    ds.entity_exists(req.oidc.user.sub, "unique_id", "Captain")
+    ds.entity_exists(req.oidc.user.sub, "unique_id", "ProjectManager")
     .then ( (exists) => {
 
         // Only add to database if user id does not already exist
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 
         // Add user to database
         } else {
-            ds.post_entity({"name": req.oidc.user.name, "unique_id": req.oidc.user.sub}, "Captain")
+            ds.post_entity({"name": req.oidc.user.name, "unique_id": req.oidc.user.sub}, "ProjectManager")
             .then(() => {
                 // Send JWT to user
                 res.json({"jwt": req.oidc.idToken, "user_id": req.oidc.user.sub});

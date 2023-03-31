@@ -5,7 +5,7 @@ const datastore = new Datastore();
 module.exports.Datastore = Datastore;
 module.exports.datastore = datastore;
 
-const KIND = "boat";
+const KIND = "project";
 
 /* ------------- Model Functions ------------- */
 
@@ -80,7 +80,7 @@ module.exports.get_all_entities = function get_all_entities(kind) {
  * @returns All entitiess in for given kind Datastore
  */
  module.exports.get_all_entities_pag = function get_all_entities_pag(req, kind) {
-    if (kind === "Boat") {
+    if (kind === "project") {
         var count_q = datastore.createQuery(kind)
         .filter("owner", "=", req.auth.sub);
     } else {
@@ -96,7 +96,7 @@ module.exports.get_all_entities = function get_all_entities(kind) {
         var q = datastore.createQuery(kind)
         .limit(5);
 
-        if (kind === "Boat") {
+        if (kind === "project") {
             q.filter("owner", "=", req.auth.sub);
         } 
 
@@ -108,7 +108,7 @@ module.exports.get_all_entities = function get_all_entities(kind) {
         return datastore.runQuery(q).then( (entities) => {
             results.items = entities[0].map(fromDatastore);
 
-            // Add self link to each boats
+            // Add self link to each projects
             for (let i=0; i<results.items.length; i++) {
                 results.items[i].self = req.protocol + "://" + req.get("host") + req.baseUrl + "/" + results.items[i].id;
             };
@@ -162,119 +162,119 @@ module.exports.get_all_entities = function get_all_entities(kind) {
     return datastore.save({"key": key, "data": req.body});
 }
 
-module.exports.patch_boat = function patch_boat (patch_body, boat_id) {
-    return module.exports.get_entity(boat_id, "Boat", "").then( (boat) => {
+module.exports.patch_project = function patch_project (patch_body, project_id) {
+    return module.exports.get_entity(project_id, "project", "").then( (project) => {
         patched_entity = {};
-        patched_entity.owner = boat.owner;
-        patched_entity.load = boat.load;
+        patched_entity.owner = project.owner;
+        patched_entity.task = project.task;
         if (patch_body.name !== undefined) {
             patched_entity.name = patch_body.name;
         } else {
-            patched_entity.name = boat.name;
+            patched_entity.name = project.name;
         }
 
         if (patch_body.type !== undefined) {
             patched_entity.type = patch_body.type;
         } else {
-            patched_entity.type = boat.type;
+            patched_entity.type = project.type;
         }
 
         if (patch_body.length !== undefined) {
             patched_entity.length = patch_body.length;
         } else {
-            patched_entity.length = boat.length;
+            patched_entity.length = project.length;
         }
 
-        const key = datastore.key(["Boat", parseInt(boat_id, 10)]);
+        const key = datastore.key(["project", parseInt(project_id, 10)]);
     
         return datastore.save({"key": key, "data": patched_entity});
     });
 }
 
-module.exports.patch_load = function patch_load (patch_body, load_id) {
-    return module.exports.get_entity(load_id, "Load", "").then( (load) => {
+module.exports.patch_task = function patch_task (patch_body, task_id) {
+    return module.exports.get_entity(task_id, "task", "").then( (task) => {
         patched_entity = {};
 
-        patched_entity.boat = load.boat;
+        patched_entity.project = task.project;
         if (patch_body.volume !== undefined) {
             patched_entity.volume = patch_body.volume;
         } else {
-            patched_entity.volume = load.volume;
+            patched_entity.volume = task.volume;
         }
 
         if (patch_body.item !== undefined) {
             patched_entity.item = patch_body.item;
         } else {
-            patched_entity.item = load.item;
+            patched_entity.item = task.item;
         }
 
         if (patch_body.creation_date !== undefined) {
             patched_entity.creation_date = patch_body.creation_date;
         } else {
-            patched_entity.creation_date = load.creation_date;
+            patched_entity.creation_date = task.creation_date;
         }
 
-        const key = datastore.key(["Load", parseInt(load_id, 10)]);
+        const key = datastore.key(["task", parseInt(task_id, 10)]);
     
         return datastore.save({"key": key, "data": patched_entity});
     });
 }
 
-module.exports.add_load_to_boat = function add_load_to_boat (boat_id, load_id) {
-    return module.exports.get_entity(boat_id, "Boat", "").then( (boat) => {
-        add_load ={};
-        add_load.owner = boat.owner;
-        add_load.name = boat.name;
-        add_load.type = boat.type;
-        add_load.length = boat.length;
-        add_load.load = load_id;
+module.exports.add_task_to_project = function add_task_to_project (project_id, task_id) {
+    return module.exports.get_entity(project_id, "project", "").then( (project) => {
+        add_task ={};
+        add_task.owner = project.owner;
+        add_task.name = project.name;
+        add_task.type = project.type;
+        add_task.length = project.length;
+        add_task.task = task_id;
 
-        const key = datastore.key(["Boat", parseInt(boat_id, 10)]);
+        const key = datastore.key(["project", parseInt(project_id, 10)]);
     
-        return datastore.save({"key": key, "data": add_load});
+        return datastore.save({"key": key, "data": add_task});
     });
 }
 
-module.exports.add_boat_to_load = function add_load_to_boat (load_id, boat_id) {
-    return module.exports.get_entity(load_id, "Load", "").then( (load) => {
-        add_load ={};
-        add_load.volume = load.volume;
-        add_load.item = load.item;
-        add_load.creation_date = load.creation_date;
-        add_load.boat = boat_id;
+module.exports.add_project_to_task = function add_task_to_project (task_id, project_id) {
+    return module.exports.get_entity(task_id, "task", "").then( (task) => {
+        add_task ={};
+        add_task.volume = task.volume;
+        add_task.item = task.item;
+        add_task.creation_date = task.creation_date;
+        add_task.project = project_id;
 
-        const key = datastore.key(["Load", parseInt(load_id, 10)]);
+        const key = datastore.key(["task", parseInt(task_id, 10)]);
     
-        return datastore.save({"key": key, "data": add_load});
+        return datastore.save({"key": key, "data": add_task});
     });
 }
 
-module.exports.remove_load_from_boat = function remove_load_from_boat (boat_id, load_id) {
-    return module.exports.get_entity(boat_id, "Boat", "").then( (boat) => {
-        add_load ={};
-        add_load.owner = boat.owner;
-        add_load.name = boat.name;
-        add_load.type = boat.type;
-        add_load.length = boat.length;
-        add_load.load = null;
+module.exports.remove_task_from_project = function remove_task_from_project (project_id, task_id) {
+    return module.exports.get_entity(project_id, "project", "").then( (project) => {
+        add_task ={};
+        add_task.owner = project.owner;
+        add_task.name = project.name;
+        add_task.type = project.type;
+        add_task.length = project.length;
+        add_task.task = null;
 
-        const key = datastore.key(["Boat", parseInt(boat_id, 10)]);
+        const key = datastore.key(["project", parseInt(project_id, 10)]);
     
-        return datastore.save({"key": key, "data": add_load});
+        return datastore.save({"key": key, "data": add_task});
     });
 }
 
-module.exports.remove_boat_from_load = function remove_load_from_boat (load_id, boat_id) {
-    return module.exports.get_entity(load_id, "Load", "").then( (load) => {
-        add_load ={};
-        add_load.volume = load.volume;
-        add_load.item = load.item;
-        add_load.creation_date = load.creation_date;
-        add_load.boat = null;
+module.exports.remove_project_from_task = function remove_task_from_project (task_id, project_id) {
+    return module.exports.get_entity(task_id, "task", "").then( (task) => {
+        add_task ={};
+        add_task.volume = task.volume;
+        add_task.item = task.item;
+        add_task.creation_date = task.creation_date;
+        add_task.project = null;
 
-        const key = datastore.key(["Load", parseInt(load_id, 10)]);
+        const key = datastore.key(["task", parseInt(task_id, 10)]);
     
-        return datastore.save({"key": key, "data": add_load});
+        return datastore.save({"key": key, "data": add_task});
     });
 }
 
